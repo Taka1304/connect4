@@ -1,7 +1,7 @@
 version: 2
 updates:
 - package-ecosystem: cargo
-  directory: "rust-connect4/"
+  directory: "wasm/"
   schedule:
     interval: daily
     time: "08:00"
