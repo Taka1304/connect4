@@ -23,10 +23,10 @@ pub struct GameState {
 
 #[wasm_bindgen]
 impl GameState {
-  pub fn new() -> GameState {
-    GameState {
+  pub fn new(first: Player) -> Self {
+    Self {
       board: [[Player::Empty; COLS]; ROWS],
-      current_player: Player::Red,
+      current_player: first,
     }
   }
 
