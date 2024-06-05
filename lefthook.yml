@@ -1,13 +1,15 @@
 pre-commit:
-  parallel: true
   commands:
     frontend-format:
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
       run: npx @biomejs/biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true {staged_files} && git update-index --again
+      priority: 100
     wasm-format:
       root: "wasm/"
       glob: "*.rs"
       run: cargo fmt --
+      priority: 100
     update-index:
       glob: "*.rs"
       run: git update-index --again
+      priority: 0

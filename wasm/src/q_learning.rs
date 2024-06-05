@@ -47,10 +47,13 @@ impl QLearningAgent {
       .fold(f64::NEG_INFINITY, f64::max);
 
     let q_value = q_values[action];
-    let new_q_value = q_value + self.learning_rate * (reward + self.discount_factor * max_next_q - q_value);
+    let new_q_value =
+      q_value + self.learning_rate * (reward + self.discount_factor * max_next_q - q_value);
 
     // 結果を反映するために再度ミュータブルな借用を取得
-    self.q_table.entry(state.to_string()).and_modify(|v| v[action] = new_q_value);
-}
-
+    self
+      .q_table
+      .entry(state.to_string())
+      .and_modify(|v| v[action] = new_q_value);
+  }
 }
