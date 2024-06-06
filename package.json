@@ -8,7 +8,7 @@
 		"build:wasm": "wasm-pack build ./wasm --target web && cp ./wasm/pkg/wasm_bg.wasm ./public/pkg/wasm_bg.wasm",
 		"start": "next start",
 		"lint": "biome check ./src",
-		"fix": "biome check --apply ./src"
+		"fix": "biome check --write ./src"
 	},
 	"dependencies": {
 		"wasm": "file:./wasm/pkg/",
