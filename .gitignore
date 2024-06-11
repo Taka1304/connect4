@@ -34,3 +34,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+wasm/red_q_table.json
+wasm/yellow_q_table.json
