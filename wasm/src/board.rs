@@ -14,6 +14,7 @@ impl BitBoard {
       player2: 0,
     }
   }
+
   // 列が埋まっているかを確認する関数
   pub fn is_column_full(&self, col: usize) -> bool {
     let combined_board = self.player1 | self.player2;
