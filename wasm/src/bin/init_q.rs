@@ -1,5 +1,5 @@
 use std::fs;
-use wasm::q_learning::QLearningAgent; // 適切なクレート名に置き換えてください
+use wasm::q_learning::QLearningAgent;
 
 fn main() {
   let agent = QLearningAgent::new();
