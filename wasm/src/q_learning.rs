@@ -95,8 +95,10 @@ impl QLearningAgent {
   }
 
   pub fn load_from_file(file_path: &str) -> Self {
-    let serialized = fs::read_to_string(file_path).expect("Unable to read file");
-    Self::deserialize(&serialized)
+    match fs::read_to_string(file_path) {
+      Ok(serialized) => Self::deserialize(&serialized),
+      Err(_) => Self::new(),
+    }
   }
 }
 

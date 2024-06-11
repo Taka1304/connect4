@@ -2,6 +2,7 @@ pub mod board;
 pub mod q_learning;
 
 use board::BitBoard;
+use q_learning::QLearningAgent;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -12,11 +13,15 @@ pub struct GameState {
 
 #[wasm_bindgen]
 impl GameState {
-  pub fn new(first_player: bool) -> Self {
+  pub fn new(second_player: bool) -> Self {
     Self {
       board: BitBoard::new(),
-      current_player: first_player,
+      current_player: second_player,
     }
+  }
+
+  pub fn make_agent(file_path: &str) {
+    QLearningAgent::load_from_file(file_path);
   }
 
   pub fn drop_disc(&mut self, col: usize, player: bool) {
@@ -27,7 +32,8 @@ impl GameState {
     self.board.get_player(player)
   }
 
-  pub fn get_current_player(&self) -> bool {
+  pub fn turn_change(&mut self) -> bool {
+    self.current_player = !self.current_player;
     self.current_player
   }
 
