@@ -9,7 +9,7 @@ use std::fs;
 
 use crate::GameState;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct QLearningAgent {
   #[serde(
     serialize_with = "serialize_q_table",
@@ -36,7 +36,7 @@ impl QLearningAgent {
   }
 
   pub fn choose_action(&mut self, game: &GameState) -> usize {
-    let state = (game.board.get_player(true), game.board.get_player(false));
+    let state = (game.board.player1, game.board.player2);
     let mut rng = rand::thread_rng();
     let mut valid_actions: Vec<usize> = (0..7).collect();
     valid_actions.retain(|&col| !game.board.is_column_full(col));

@@ -9,8 +9,7 @@ fn main() {
 
   let mut red = QLearningAgent::load_from_file(r_file_path);
   let mut yellow = QLearningAgent::load_from_file(y_file_path);
-  let mut r_board = game.get_board(true);
-  let mut y_board = game.get_board(false);
+  let mut board = game.get_board();
 
   let start_time = Instant::now();
 
@@ -27,15 +26,23 @@ fn main() {
         game.drop_disc(action, player);
       }
 
-      let next_r = game.get_board(true);
-      let next_y = game.get_board(false);
+      let next_board = game.get_board();
 
       let reward = game.get_reward(player);
-      red.update_q_values(&(r_board, y_board), action, reward, &(next_r, next_y));
-      yellow.update_q_values(&(y_board, r_board), action, reward, &(next_y, next_r));
+      red.update_q_values(
+        &(board.player1, board.player2),
+        action,
+        reward,
+        &(next_board.player1, next_board.player2),
+      );
+      yellow.update_q_values(
+        &(board.player2, board.player1),
+        action,
+        reward,
+        &(next_board.player2, next_board.player1),
+      );
 
-      r_board = next_r;
-      y_board = next_y;
+      board = next_board;
     }
 
     game.reset();

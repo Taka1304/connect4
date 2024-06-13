@@ -1,10 +1,14 @@
+use wasm_bindgen::prelude::*;
+
 const ROWS: usize = 6;
 const COLS: usize = 7;
 
 // ボードの状態を保持するための構造体
+#[wasm_bindgen]
+#[derive(Clone)]
 pub struct BitBoard {
-  player1: u64, // プレイヤー1のビットボード
-  player2: u64, // プレイヤー2のビットボード
+  pub player1: u64, // プレイヤー1のビットボード
+  pub player2: u64, // プレイヤー2のビットボード
 }
 
 impl BitBoard {
@@ -69,14 +73,5 @@ impl BitBoard {
     }
 
     None
-  }
-
-  // true -> player1, false -> player2
-  pub fn get_player(&self, player: bool) -> u64 {
-    if player {
-      self.player1
-    } else {
-      self.player2
-    }
   }
 }
