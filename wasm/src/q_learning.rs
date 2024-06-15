@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::fmt;
 use std::fs;
 
-use crate::GameState;
+use crate::board::BitBoard;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct QLearningAgent {
@@ -31,15 +31,25 @@ impl QLearningAgent {
     }
   }
 
+  pub fn get_reward(self, board: &BitBoard, turn: bool) -> f64 {
+    match board.judge() {
+      Some(1) if turn => 1.0,
+      Some(1) => -1.0,
+      Some(2) if turn => -1.0,
+      Some(2) => 1.0,
+      _ => 0.0,
+    }
+  }
+
   pub fn get_q_values(&mut self, state: &(u64, u64)) -> &mut Vec<f64> {
     self.q_table.entry(*state).or_insert(vec![0.0; 7])
   }
 
-  pub fn choose_action(&mut self, game: &GameState) -> usize {
-    let state = (game.board.player1, game.board.player2);
+  pub fn choose_action(&mut self, board: &BitBoard) -> usize {
+    let state = (board.player1, board.player2);
     let mut rng = rand::thread_rng();
     let mut valid_actions: Vec<usize> = (0..7).collect();
-    valid_actions.retain(|&col| !game.board.is_column_full(col));
+    valid_actions.retain(|&col| !board.is_column_full(col));
 
     if rng.gen::<f64>() < self.exploration_rate {
       *valid_actions.choose(&mut rng).unwrap()
