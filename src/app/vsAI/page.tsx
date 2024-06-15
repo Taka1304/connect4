@@ -1,21 +1,48 @@
 "use client";
 import * as wasm_js from "@/../wasm/pkg/wasm.js";
+import Board from "@/components/Molecules/Board";
 import { Button } from "@/components/ui/button";
+import { COLUMNS } from "@/const/board";
 import { useEffect, useState } from "react";
 
 const Connect4 = () => {
-	const [game, setGame] = useState<wasm_js.GameState | null>(null);
-	const [board, setBoard] = useState<Uint8Array>(new Uint8Array(42));
+	const [vsAi, setVsAi] = useState<wasm_js.VsAi | null>(null);
+	const [board, setBoard] = useState<wasm_js.BitBoard>();
+	const [turn, setTurn] = useState(true);
 	const [gameOver, setGameOver] = useState(false);
-	const [winner, setWinner] = useState<wasm_js.Player | null>(null);
+	const [winner, setWinner] = useState<number | undefined>();
 
-	const resetGame = () => {
-		const g = wasm_js.GameState.new(1);
-		setGame(g);
-		setBoard(g.get_board());
+	const initializeGame = () => {
+		const g = new wasm_js.VsAi(false); // TODO: 先手後手の選択
+		const b = new wasm_js.BitBoard();
+
+		setVsAi(g);
+		setBoard(b);
 		setGameOver(false);
-		setWinner(null);
+		setWinner(undefined);
+		setTurn(true);
 	};
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (!vsAi || !board) {
+			return;
+		}
+
+		const isEnd = board.judge();
+		if (isEnd) {
+			setGameOver(true);
+			setWinner(isEnd);
+			return;
+		}
+
+		if (!turn) {
+			const ai_move = vsAi.choose_action(board);
+			board.drop_disc(ai_move, false);
+			setBoard(board);
+			setTurn(true);
+		}
+	}, [turn]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -25,78 +52,50 @@ const Connect4 = () => {
 			})
 			.then((bytes) => {
 				wasm_js.initSync(bytes); // initialize the wasm module
-				resetGame();
+				initializeGame();
 			})
 			.catch((error) => {
 				console.error("Error fetching wasm module:", error);
 			});
 	}, []);
 
-	const handleDropDisc = (col: number) => {
-		if (!gameOver && game) {
-			game.drop_disc(col);
-			setBoard(game.get_board());
-			const result = game.is_game_over();
-			if (result !== undefined) {
-				setGameOver(true);
-				setWinner(result);
-				return;
-			}
-			// AI move
-			game.ai_move();
-			setBoard(game.get_board());
-			const aiResult = game.is_game_over();
-			if (aiResult !== undefined) {
-				setGameOver(true);
-				setWinner(aiResult);
-			}
-		}
-	};
+	if (!vsAi || !board) {
+		return <div>Loading...</div>;
+	}
 
-	const renderBoard = () => {
-		const rows = [];
-		for (let row = 0; row < 6; row++) {
-			const cells = [];
-			for (let col = 0; col < 7; col++) {
-				const cellIndex = row * 7 + col;
-				const cellValue = board[cellIndex];
-				cells.push(
-					<td
-						className="border border-slate-300 m-1"
-						key={col}
-						onClick={() => handleDropDisc(col)}
-						onKeyUp={(e) => {
-							if (e.key === "Enter") {
-								handleDropDisc(col);
-							}
-						}}
-						onKeyDown={(e) => {
-							if (e.key === "Enter") {
-								handleDropDisc(col);
-							}
-						}}
-						style={{
-							width: 50,
-							height: 50,
-							backgroundColor:
-								cellValue === 1 ? "red" : cellValue === 2 ? "yellow" : "white",
-							borderRadius: "50%",
-						}}
-					/>,
-				);
-			}
-			rows.push(<tr key={row}>{cells}</tr>);
+	const dropDisk = (column: number) => {
+		if (gameOver || !turn) {
+			return;
 		}
-		return rows;
+
+		if (board.is_column_full(column)) {
+			return;
+		}
+		console.log("dropDisk", column);
+
+		board.drop_disc(column, true);
+
+		setBoard(board);
+		setTurn(false);
 	};
 
 	return (
 		<div className="flex flex-col items-center">
 			<div>
 				<h1>Connect4</h1>
-				<table>
-					<tbody className="border border-separate">{renderBoard()}</tbody>
-				</table>
+				<Board board={board} />
+				<div className="w-full flex justify-around">
+					{gameOver ||
+						Array.from({ length: COLUMNS }).map((_, idx) => (
+							<Button
+								type="button"
+								key={`key${idx << 1}`}
+								onClick={() => dropDisk(idx)}
+							>
+								{idx + 1}
+							</Button>
+						))}
+				</div>
 				{gameOver && (
 					<div>
 						<h2>
@@ -106,7 +105,7 @@ const Connect4 = () => {
 									? "Red wins!"
 									: "Yellow wins!"}
 						</h2>
-						<Button onClick={resetGame}>もう一度</Button>
+						<Button onClick={initializeGame}>もう一度</Button>
 					</div>
 				)}
 			</div>
