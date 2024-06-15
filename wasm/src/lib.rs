@@ -28,9 +28,9 @@ impl VsAi {
     }
   }
 
-  pub fn choose_action(&mut self, board: BitBoard) -> usize {
+  pub fn choose_action(&mut self, board: &BitBoard) -> usize {
     // TODO: cloneしまくり
-    let _board = board.clone();
+    let old_board = board.clone();
     let action = self.agent.clone().unwrap().choose_action(&board);
     let _ = board.clone().drop_disc(action, self.is_first);
     let reward = self
@@ -39,7 +39,7 @@ impl VsAi {
       .unwrap()
       .get_reward(&board, self.is_first);
     self.agent.clone().unwrap().update_q_values(
-      &(_board.player1, _board.player2),
+      &(old_board.player1, old_board.player2),
       action,
       reward,
       &(board.player1, board.player2),
