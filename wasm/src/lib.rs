@@ -13,6 +13,7 @@ pub struct VsAi {
 
 #[wasm_bindgen]
 impl VsAi {
+  #[wasm_bindgen(constructor)]
   pub fn new(is_first: bool) -> Self {
     if is_first {
       Self {

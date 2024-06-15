@@ -11,7 +11,9 @@ pub struct BitBoard {
   pub player2: u64, // プレイヤー2のビットボード
 }
 
+#[wasm_bindgen]
 impl BitBoard {
+  #[wasm_bindgen(constructor)]
   pub fn new() -> Self {
     BitBoard {
       player1: 0,
@@ -26,11 +28,7 @@ impl BitBoard {
   }
 
   // ビットボードの値を更新する関数
-  pub fn drop_disc(&mut self, col: usize, player: bool) -> Result<(), &'static str> {
-    if self.is_column_full(col) {
-      return Err("Column is full");
-    }
-
+  pub fn drop_disc(&mut self, col: usize, player: bool) {
     let combined_board = self.player1 | self.player2;
     let mut bit_position = col * ROWS;
     while combined_board & (1 << bit_position) != 0 {
@@ -42,8 +40,6 @@ impl BitBoard {
     } else {
       self.player2 |= 1 << bit_position;
     }
-
-    Ok(())
   }
 
   // ゲームが終了したかを判定する関数
