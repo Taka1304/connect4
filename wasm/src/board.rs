@@ -28,7 +28,7 @@ impl BitBoard {
   }
 
   // ビットボードの値を更新する関数
-  pub fn drop_disc(&mut self, col: usize, player: bool) {
+  pub fn drop_disc(&mut self, col: usize, player: bool) -> usize {
     let combined_board = self.player1 | self.player2;
     let mut bit_position = col * ROWS;
     while combined_board & (1 << bit_position) != 0 {
@@ -40,6 +40,7 @@ impl BitBoard {
     } else {
       self.player2 |= 1 << bit_position;
     }
+    bit_position
   }
 
   // ゲームが終了したかを判定する関数
