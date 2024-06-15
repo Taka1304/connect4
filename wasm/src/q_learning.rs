@@ -25,9 +25,9 @@ impl QLearningAgent {
   pub fn new() -> Self {
     QLearningAgent {
       q_table: HashMap::new(),
-      learning_rate: 0.1,
+      learning_rate: 0.2,
       discount_factor: 0.99,
-      exploration_rate: 0.1,
+      exploration_rate: 0.7,
     }
   }
 
@@ -107,7 +107,10 @@ impl QLearningAgent {
   pub fn load_from_file(file_path: &str) -> Self {
     match fs::read_to_string(file_path) {
       Ok(serialized) => Self::deserialize(&serialized),
-      Err(_) => Self::new(),
+      Err(_) => {
+        println!("Err");
+        Self::new()
+      }
     }
   }
 }
