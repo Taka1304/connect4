@@ -1,6 +1,7 @@
 pre-commit:
   commands:
     frontend-format:
+      root: "src/"
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
       run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files} && git update-index --again
       priority: 100
