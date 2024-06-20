@@ -15,7 +15,6 @@ fn main() {
 
   for _ in 0..episodes {
     while board.judge().is_none() {
-      turn = !turn;
       let action: usize;
 
       if turn {
@@ -42,8 +41,10 @@ fn main() {
       );
 
       board = next_board;
+      turn = !turn;
     }
 
+    // Reset board
     board = BitBoard::new();
   }
 
