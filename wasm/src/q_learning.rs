@@ -20,14 +20,24 @@ pub struct QLearningAgent {
   pub discount_factor: f64,
   pub exploration_rate: f64,
 }
-
-impl QLearningAgent {
-  pub fn new() -> Self {
+impl Default for QLearningAgent {
+  fn default() -> Self {
     QLearningAgent {
       q_table: HashMap::new(),
-      learning_rate: 0.2,
+      learning_rate: 0.3,
       discount_factor: 0.99,
-      exploration_rate: 0.7,
+      exploration_rate: 0.2,
+    }
+  }
+}
+
+impl QLearningAgent {
+  pub fn new(learning_rate: f64, discount_factor: f64, exploration_rate: f64) -> Self {
+    QLearningAgent {
+      learning_rate,
+      discount_factor,
+      exploration_rate,
+      q_table: HashMap::new(),
     }
   }
 
@@ -107,10 +117,7 @@ impl QLearningAgent {
   pub fn load_from_file(file_path: &str) -> Self {
     match fs::read_to_string(file_path) {
       Ok(serialized) => Self::deserialize(&serialized),
-      Err(_) => {
-        println!("Err");
-        Self::new()
-      }
+      Err(_) => Self::default(),
     }
   }
 }

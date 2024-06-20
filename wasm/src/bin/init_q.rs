@@ -2,7 +2,7 @@ use std::fs;
 use wasm::q_learning::QLearningAgent;
 
 fn main() {
-  let agent = QLearningAgent::new();
+  let agent = QLearningAgent::default();
   let serialized_agent = agent.serialize();
   let file_path = "red_q_table.json";
 
